@@ -10,7 +10,7 @@ import java.util.Objects;
  * @Author OreChou
  * @Create 2017-12-07 23:20
  */
-public class Request {
+public class Route {
 
     /**
      * HTTP url
@@ -22,7 +22,7 @@ public class Request {
      */
     private Method method;
 
-    public Request(String path, Method method) {
+    public Route(String path, Method method) {
         this.path = path;
         this.method = method;
     }
@@ -46,14 +46,22 @@ public class Request {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Request)) return false;
-        Request request = (Request) o;
-        return Objects.equals(getPath(), request.getPath()) &&
-                getMethod() == request.getMethod();
+        if (!(o instanceof Route)) return false;
+        Route route = (Route) o;
+        return Objects.equals(getPath(), route.getPath()) &&
+                getMethod() == route.getMethod();
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getPath(), getMethod());
+    }
+
+    @Override
+    public String toString() {
+        return "Route{" +
+                "path='" + path + '\'' +
+                ", method=" + method +
+                '}';
     }
 }

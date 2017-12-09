@@ -56,4 +56,12 @@ public class Handler {
 
         return Objects.hash(getControllerClass(), getMethod());
     }
+
+    @Override
+    public String toString() {
+        return "Handler{" +
+                "controllerClass=" + controllerClass +
+                ", method=" + method +
+                '}';
+    }
 }

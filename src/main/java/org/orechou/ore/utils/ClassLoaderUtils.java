@@ -61,7 +61,7 @@ public class ClassLoaderUtils {
      * @param filePath 文件或者文件夹的名称
      * @param packageName 该文件所属包名
      */
-    public static void getClassFromFileOrDirectory(HashSet<Class<?>> classSet, String filePath, String packageName) {
+    private static void getClassFromFileOrDirectory(HashSet<Class<?>> classSet, String filePath, String packageName) {
         File dir = new File(filePath);
         // 若文件不存在，且文件不是目录，则直接返回
         if (!dir.exists() || !dir.isDirectory()) {
@@ -88,7 +88,7 @@ public class ClassLoaderUtils {
      * @param classSet
      * @param className
      */
-    public static void loadClass(HashSet<Class<?>> classSet, String className) {
+    private static void loadClass(HashSet<Class<?>> classSet, String className) {
         Class<?> clazz;
         try {
             // 加载一个类，但不初始化它
@@ -98,6 +98,23 @@ public class ClassLoaderUtils {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 实际加载 Class 的函数
+     * @param className class 的名称包含了包名
+     * @param isInitialized 是否初始化该 class
+     * @return
+     */
+    public static Class<?> loadClass(String className, boolean isInitialized) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(className, isInitialized, getClassLoader());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return clazz;
     }
 
 //    public static void main(String[] args) {
