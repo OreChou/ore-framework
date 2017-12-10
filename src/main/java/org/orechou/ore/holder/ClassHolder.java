@@ -1,6 +1,7 @@
 package org.orechou.ore.holder;
 
 import org.orechou.ore.annotation.Controller;
+import org.orechou.ore.annotation.Service;
 import org.orechou.ore.utils.ClassLoaderUtils;
 
 import java.util.HashSet;
@@ -14,9 +15,20 @@ import java.util.Set;
  */
 public final class ClassHolder {
 
+    /**
+     * 所有类类型集合
+     */
     private static final Set<Class<?>> CLASS_SET;
 
+    /**
+     * 所有控制类的类类型集合
+     */
     private static final Set<Class<?>> CONTROLLER_CLASS_SET;
+
+    /**
+     * 所有服务类的类类型集合
+     */
+    private static final Set<Class<?>> SERVICE_CLASS_SET;
 
     static {
         CLASS_SET = ClassLoaderUtils.getClassFromPackage(PropertiesConfigHolder.getScanPackage());
@@ -24,6 +36,12 @@ public final class ClassHolder {
         for (Class<?> clazz : CLASS_SET) {
             if (clazz.isAnnotationPresent(Controller.class)) {
                 CONTROLLER_CLASS_SET.add(clazz);
+            }
+        }
+        SERVICE_CLASS_SET = new HashSet<>();
+        for (Class<?> clazz : CLASS_SET) {
+            if (clazz.isAnnotationPresent(Service.class)) {
+                SERVICE_CLASS_SET.add(clazz);
             }
         }
 
@@ -36,5 +54,7 @@ public final class ClassHolder {
     public static Set<Class<?>> getControllerClassSet() {
         return CONTROLLER_CLASS_SET;
     }
+
+    public static Set<Class<?>> getServiceClassSet() {return SERVICE_CLASS_SET;}
 
 }

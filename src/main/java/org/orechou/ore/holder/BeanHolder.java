@@ -34,4 +34,8 @@ public final class BeanHolder {
         return BEAN_MAP.get(clazz);
     }
 
+    public static HashMap<Class<?>, Object> getBeanMap() {
+        return BEAN_MAP;
+    }
+
 }

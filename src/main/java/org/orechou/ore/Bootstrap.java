@@ -1,10 +1,7 @@
 package org.orechou.ore;
 
 import org.orechou.ore.bean.Route;
-import org.orechou.ore.holder.BeanHolder;
-import org.orechou.ore.holder.ClassHolder;
-import org.orechou.ore.holder.ControllerHolder;
-import org.orechou.ore.holder.PropertiesConfigHolder;
+import org.orechou.ore.holder.*;
 import org.orechou.ore.utils.ClassLoaderUtils;
 
 /**
@@ -20,18 +17,12 @@ public final class Bootstrap {
                 PropertiesConfigHolder.class,
                 ClassHolder.class,
                 ControllerHolder.class,
-                BeanHolder.class
+                BeanHolder.class,
+                IocHolder.class
         };
         for (Class<?> clazz : loadClasses) {
-            ClassLoaderUtils.loadClass(clazz.getName(), false);
+            ClassLoaderUtils.loadClass(clazz.getName(), true);
         }
-        System.out.println(PropertiesConfigHolder.getScanPackage());
-        System.out.println(ClassHolder.getClassSet().size());
-        System.out.println(ControllerHolder.ROUTE_HANDLER.size());
-        for (Route route : ControllerHolder.ROUTE_HANDLER.keySet()) {
-            System.out.println(route.toString());
-        }
-
     }
 
     public static void main(String[] args) {

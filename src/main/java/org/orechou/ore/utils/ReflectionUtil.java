@@ -1,6 +1,7 @@
 package org.orechou.ore.utils;
 
 import org.orechou.ore.bean.Params;
+import org.orechou.ore.enums.ExceptionLevel;
 import org.orechou.ore.exception.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class ReflectionUtil {
             instance = clazz.newInstance();
         } catch (Exception e) {
             LOGGER.error(NEW_INSTANCE_FAIL, e);
-            throw new BaseException(NEW_INSTANCE_FAIL);
+            throw new BaseException(NEW_INSTANCE_FAIL, ExceptionLevel.FRAMEWORK);
         }
         return instance;
     }
@@ -59,7 +60,7 @@ public class ReflectionUtil {
             result = method.invoke(classObj, params);
         } catch (Exception e) {
             LOGGER.error(INVOKE_METHOD_FAIL, e);
-            throw new BaseException(INVOKE_METHOD_FAIL);
+            throw new BaseException(INVOKE_METHOD_FAIL, ExceptionLevel.FRAMEWORK);
         }
         return result;
     }
