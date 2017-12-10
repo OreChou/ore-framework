@@ -1,6 +1,7 @@
 package org.orechou.ore;
 
 import org.orechou.ore.bean.Route;
+import org.orechou.ore.holder.BeanHolder;
 import org.orechou.ore.holder.ClassHolder;
 import org.orechou.ore.holder.ControllerHolder;
 import org.orechou.ore.utils.ClassLoaderUtils;
@@ -16,7 +17,8 @@ public final class Bootstrap {
     public static void init() {
         Class<?>[] loadClasses = new Class<?>[]{
                 ClassHolder.class,
-                ControllerHolder.class
+                ControllerHolder.class,
+                BeanHolder.class
         };
         for (Class<?> clazz : loadClasses) {
             ClassLoaderUtils.loadClass(clazz.getName(), false);

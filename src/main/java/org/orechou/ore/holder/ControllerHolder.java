@@ -79,4 +79,22 @@ public final class ControllerHolder {
         }
     }
 
+    /**
+     * 判断是否是一个有效的路由
+     * @param route 路由
+     * @return
+     */
+    public static boolean isValidRoute(Route route) {
+        return ROUTE_HANDLER.containsKey(route);
+    }
+
+    /**
+     * 根据传入的路由信息，找到该路由所对应的处理函数并且返回
+     * @param route 路由
+     * @return
+     */
+    public static Handler getHandler(Route route) {
+        return ROUTE_HANDLER.get(route);
+    }
+
 }
