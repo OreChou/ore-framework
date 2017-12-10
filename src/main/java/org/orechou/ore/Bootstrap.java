@@ -4,6 +4,7 @@ import org.orechou.ore.bean.Route;
 import org.orechou.ore.holder.BeanHolder;
 import org.orechou.ore.holder.ClassHolder;
 import org.orechou.ore.holder.ControllerHolder;
+import org.orechou.ore.holder.PropertiesConfigHolder;
 import org.orechou.ore.utils.ClassLoaderUtils;
 
 /**
@@ -16,6 +17,7 @@ public final class Bootstrap {
 
     public static void init() {
         Class<?>[] loadClasses = new Class<?>[]{
+                PropertiesConfigHolder.class,
                 ClassHolder.class,
                 ControllerHolder.class,
                 BeanHolder.class
@@ -23,6 +25,7 @@ public final class Bootstrap {
         for (Class<?> clazz : loadClasses) {
             ClassLoaderUtils.loadClass(clazz.getName(), false);
         }
+        System.out.println(PropertiesConfigHolder.getScanPackage());
         System.out.println(ClassHolder.getClassSet().size());
         System.out.println(ControllerHolder.ROUTE_HANDLER.size());
         for (Route route : ControllerHolder.ROUTE_HANDLER.keySet()) {

@@ -19,7 +19,7 @@ public final class ClassHolder {
     private static final Set<Class<?>> CONTROLLER_CLASS_SET;
 
     static {
-        CLASS_SET = ClassLoaderUtils.getClassFromPackage("org.orechou.ore.test");
+        CLASS_SET = ClassLoaderUtils.getClassFromPackage(PropertiesConfigHolder.getScanPackage());
         CONTROLLER_CLASS_SET = new HashSet<>();
         for (Class<?> clazz : CLASS_SET) {
             if (clazz.isAnnotationPresent(Controller.class)) {
