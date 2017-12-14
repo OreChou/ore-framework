@@ -46,6 +46,12 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.19</version>
         </dependency>
+        <!-- 用于动态生成代码的库 -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.5</version>
+        </dependency>
     </dependencies>
 
 </project>
