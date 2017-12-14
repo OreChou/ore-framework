@@ -4,6 +4,7 @@ import org.orechou.ore.annotation.Controller;
 import org.orechou.ore.annotation.Service;
 import org.orechou.ore.utils.ClassLoaderUtils;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,5 +57,35 @@ public final class ClassHolder {
     }
 
     public static Set<Class<?>> getServiceClassSet() {return SERVICE_CLASS_SET;}
+
+    /**
+     * 获取应用包名下某父类（或者接口）的所有子类（或实现类）
+     * @param superClass
+     * @return
+     */
+    public static Set<Class<?>> getClassSetBySuper(Class<?> superClass) {
+        Set<Class<?>> classSet = new HashSet<>();
+        for (Class<?> clazz : CLASS_SET) {
+            if (superClass.isAssignableFrom(clazz) && !superClass.equals(clazz)) {
+                classSet.add(clazz);
+            }
+        }
+        return classSet;
+    }
+
+    /**
+     * 获取应用包名下某有注解的所有类
+     * @param annotationClass
+     * @return
+     */
+    public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation> annotationClass) {
+        Set<Class<?>> classSet = new HashSet<>();
+        for (Class<?> clazz : CLASS_SET) {
+            if (clazz.isAnnotationPresent(annotationClass)) {
+                classSet.add(clazz);
+            }
+        }
+        return classSet;
+    }
 
 }

@@ -38,4 +38,8 @@ public final class BeanHolder {
         return BEAN_MAP;
     }
 
+    public static void setBean(Class<?> clazz, Object object) {
+        BEAN_MAP.put(clazz, object);
+    }
+
 }

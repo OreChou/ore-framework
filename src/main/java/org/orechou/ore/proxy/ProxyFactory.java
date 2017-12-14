@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class ProxyFactory {
 
-    public static <T> T createProxy(final Class<?> target, final List<Proxy> proxyList) {
+    public static <T> T createProxy(final Class<?> targetClass, final List<Proxy> proxyList) {
 
-        return (T) Enhancer.create(target, new MethodInterceptor() {
+        return (T) Enhancer.create(targetClass, new MethodInterceptor() {
             @Override
             public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-                return null;
+                return new ProxyChain(targetClass, obj, method, args, proxy, proxyList);
             }
         });
 
