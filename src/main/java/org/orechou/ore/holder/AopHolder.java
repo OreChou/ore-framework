@@ -26,7 +26,7 @@ public final class AopHolder {
             Map<Class<?>, Set<Class<?>>> proxyMap = createProxyMap();
             Map<Class<?>, List<Proxy>> targetMap = createTargetMap(proxyMap);
             for (Map.Entry<Class<?>, List<Proxy>> targetEntry : targetMap.entrySet()) {
-                Class<?> targetClass = targetEntry.getClass();
+                Class<?> targetClass = targetEntry.getKey();
                 List<Proxy> proxyList = targetEntry.getValue();
                 Object proxy = ProxyFactory.createProxy(targetClass, proxyList);
                 BeanHolder.setBean(targetClass, proxy);
