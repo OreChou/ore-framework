@@ -32,6 +32,11 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
 
+    /**
+     * 初始化 Servlet
+     * @param config
+     * @throws ServletException
+     */
     @Override
     public void init(ServletConfig config) throws ServletException {
         Bootstrap.init();

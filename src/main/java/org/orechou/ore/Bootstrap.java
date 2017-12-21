@@ -18,7 +18,8 @@ public final class Bootstrap {
                 ClassHolder.class,
                 ControllerHolder.class,
                 BeanHolder.class,
-                IocHolder.class
+                IocHolder.class,
+                AopHolder.class
         };
         for (Class<?> clazz : loadClasses) {
             ClassLoaderUtils.loadClass(clazz.getName(), true);

@@ -32,6 +32,9 @@ public final class ClassHolder {
     private static final Set<Class<?>> SERVICE_CLASS_SET;
 
     static {
+        /**
+         * 根据指定的包名去扫描所有的Bean类
+         */
         CLASS_SET = ClassLoaderUtils.getClassFromPackage(PropertiesConfigHolder.getScanPackage());
         CONTROLLER_CLASS_SET = new HashSet<>();
         for (Class<?> clazz : CLASS_SET) {
