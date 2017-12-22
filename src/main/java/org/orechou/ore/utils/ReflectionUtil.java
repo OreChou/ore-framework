@@ -107,15 +107,16 @@ public class ReflectionUtil {
      * @param classObj 类的实例
      * @param field 属性域
      */
-    public static void getField(Object classObj, Field field) {
+    public static Object getField(Object classObj, Field field) {
         Object value;
         try {
             field.setAccessible(true);
-            field.get(classObj);
+            value = field.get(classObj);
         } catch (Exception e) {
             LOGGER.error(GET_FIELD_FAIL, e);
             throw new BaseException(GET_FIELD_FAIL);
         }
+        return value;
     }
 
     /**

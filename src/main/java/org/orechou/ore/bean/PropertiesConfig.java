@@ -10,6 +10,8 @@ public class PropertiesConfig {
 
     private BaseProperties base;
 
+    private DatabaseProperties database;
+
     public BaseProperties getBase() {
         return base;
     }
@@ -18,4 +20,11 @@ public class PropertiesConfig {
         this.base = base;
     }
 
+    public DatabaseProperties getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(DatabaseProperties database) {
+        this.database = database;
+    }
 }

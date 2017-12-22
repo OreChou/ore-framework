@@ -4,6 +4,7 @@ import org.orechou.ore.annotation.orm.Id;
 import org.orechou.ore.annotation.orm.Size;
 import org.orechou.ore.test.entity.User;
 import org.orechou.ore.utils.NamingStringUtils;
+import org.orechou.ore.utils.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author OreChou
  * @create 2017-12-21 19:31
  */
-public class DbUtils {
+public class SqlUtils {
 
     private static TypeConvertor typeConvertor;
 
@@ -70,8 +71,30 @@ public class DbUtils {
         return sqlBuffer.toString();
     }
 
+    /**
+     *
+     * @param object
+     * @return
+     */
+    public static String insertRecordSQL(Object object) {
+        StringBuffer sqlBuffer = new StringBuffer();
+
+        Class<?> clazz = object.getClass();
+        System.out.println(clazz.getName());
+
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            String fieldName = field.getName();
+            String columnName = NamingStringUtils.camelToUnderline(fieldName);
+            Object value = ReflectionUtil.getField(object, field);
+        }
+
+        return sqlBuffer.toString();
+    }
+
     public static void main(String[] args) {
         System.out.println(createTableSQL(User.class));
+        System.out.println(insertRecordSQL(new User()));
     }
 
 }
