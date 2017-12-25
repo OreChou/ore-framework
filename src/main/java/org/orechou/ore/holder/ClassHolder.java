@@ -2,6 +2,7 @@ package org.orechou.ore.holder;
 
 import org.orechou.ore.annotation.Controller;
 import org.orechou.ore.annotation.Service;
+import org.orechou.ore.annotation.orm.Entity;
 import org.orechou.ore.utils.ClassLoaderUtils;
 
 import java.lang.annotation.Annotation;
@@ -60,6 +61,20 @@ public final class ClassHolder {
     }
 
     public static Set<Class<?>> getServiceClassSet() {return SERVICE_CLASS_SET;}
+
+    /**
+     * 获取标有Entity注解的类类型（上面的两个方法也应该改成这样，因为方法只需要执行一次，这个类不需要增加存储空间来保存这些类类型）
+     * @return
+     */
+    public static Set<Class<?>> getEntityClassSet() {
+        Set<Class<?>> results = new HashSet<>();
+        for (Class<?> clazz : CLASS_SET) {
+            if (clazz.isAnnotationPresent(Entity.class)) {
+                results.add(clazz);
+            }
+        }
+        return results;
+    }
 
     /**
      * 获取应用包名下某父类（或者接口）的所有子类（或实现类）
