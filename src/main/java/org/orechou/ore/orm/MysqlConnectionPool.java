@@ -74,11 +74,13 @@ public class MysqlConnectionPool implements ConnectionPool {
             // 空闲连接列表不为空
             if (this.getFreeNumber() > 0) {
                 conn = freeConnections.pollFirst();
-                if (isValid(conn)) { // 若获取的连接有效
+                // 若获取的连接有效
+                if (isValid(conn)) {
                     activeConnections.add(conn);
                     localConnection.set(conn);
                 } else {
-                    conn = getConnection(); // 同步方法是可重入锁
+                    // 同步方法是可重入锁
+                    conn = getConnection();
                 }
             } else { // 空闲列表为空
                 try {

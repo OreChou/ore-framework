@@ -1,14 +1,19 @@
-package org.orechou.ore.orm;
+package org.orechou.ore.orm.utils;
 
 import org.orechou.ore.annotation.orm.Id;
 import org.orechou.ore.annotation.orm.Size;
+import org.orechou.ore.orm.MysqlTypeConvertor;
+import org.orechou.ore.orm.TypeConvertor;
 import org.orechou.ore.test.entity.User;
 import org.orechou.ore.utils.NamingStringUtils;
 import org.orechou.ore.utils.ReflectionUtil;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -78,23 +83,77 @@ public class SqlUtils {
      */
     public static String insertRecordSQL(Object object) {
         StringBuffer sqlBuffer = new StringBuffer();
-
+        int valueCount = 0;
         Class<?> clazz = object.getClass();
-        System.out.println(clazz.getName());
+        List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+        String tableName = NamingStringUtils.camelToUnderline(object.getClass().getSimpleName());
+        sqlBuffer.append("insert into " + tableName + "(");
+        for (int i = 0; i < fields.size(); i++) {
+            Field field = fields.get(i);
+            // 对象中有值得才生成对应的SQL
+            if (ReflectionUtil.getField(object, field) != null) {
+                String columnName = NamingStringUtils.camelToUnderline(field.getName());
+                sqlBuffer.append(columnName + ", ");
+                valueCount++;
+            }
+        }
+        sqlBuffer.delete(sqlBuffer.length() - 2, sqlBuffer.length()).append(") values(");
+        for (int i = 0; i < valueCount; i++) {
+            if (i == valueCount - 1) {
+                sqlBuffer.append("?)");
+            }  else {
+                sqlBuffer.append("?, ");
+            }
+        }
+        return sqlBuffer.toString();
+    }
 
+    public static String updateRecordSQL(Object object) {
+        StringBuffer sqlBuffer = new StringBuffer();
+        String tableName = NamingStringUtils.camelToUnderline(object.getClass().getSimpleName());
+        sqlBuffer.append("update " + tableName + " set ");
+        Class<?> clazz = object.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        Field idField = null;
+        for (Field field : fields) {
+            Object value = ReflectionUtil.getField(object, field);
+            if (value != null) {
+                if (!field.isAnnotationPresent(Id.class)) {
+                    sqlBuffer.append(NamingStringUtils.camelToUnderline(field.getName()) + " = ?, ");
+                } else {
+                    idField = field;
+                }
+            }
+        }
+        sqlBuffer.delete(sqlBuffer.length() - 2, sqlBuffer.length());
+        sqlBuffer.append(" where " + NamingStringUtils.camelToUnderline(idField.getName()) + " = ?");
+        return sqlBuffer.toString();
+    }
+
+    public static String queryRecordSQL(Object object) {
+        StringBuffer sqlBuffer = new StringBuffer();
+        String tableName = NamingStringUtils.camelToUnderline(object.getClass().getSimpleName());
+        sqlBuffer.append("select * from " + tableName + " where ");
+        Class<?> clazz = object.getClass();
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
-            String fieldName = field.getName();
-            String columnName = NamingStringUtils.camelToUnderline(fieldName);
             Object value = ReflectionUtil.getField(object, field);
+            if (value != null) {
+                sqlBuffer.append(NamingStringUtils.camelToUnderline(field.getName()) + " = ?, ");
+            }
         }
-
+        sqlBuffer.delete(sqlBuffer.length() - 2, sqlBuffer.length());
         return sqlBuffer.toString();
     }
 
     public static void main(String[] args) {
         System.out.println(createTableSQL(User.class));
-        System.out.println(insertRecordSQL(new User()));
+        User user = new User();
+        user.setId((long) 123);
+        user.setCreateTime(new Date());
+        System.out.println(insertRecordSQL(user));
+        System.out.println(updateRecordSQL(user));
+        System.out.println(queryRecordSQL(user));
     }
 
 }

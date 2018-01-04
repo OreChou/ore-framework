@@ -2,8 +2,8 @@ base:
   basePackage: "org.orechou.ore.test"
 
 database:
-  driverName: "com.mysql.jdbc.Driver"
-  url: "jdbc:mysql://localhost:3306/travel?characterEncoding=utf8&useSSL=false&tinyInt1isBit=false&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+  driverName: "com.mysql.cj.jdbc.Driver"
+  url: "jdbc:mysql://localhost:3306/ore_framework_test?characterEncoding=utf8&useSSL=false&tinyInt1isBit=false&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
   username: "root"
   password: "root"
   maxConnections: 10

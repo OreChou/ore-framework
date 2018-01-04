@@ -26,9 +26,23 @@ public final class EntityHolder {
      */
     public final static Map<String, Map<String, String>> tableMap;
 
+    /**
+     * Key: 实体类类型
+     * Value: 数据表名
+     */
+    public final static Map<Class<?>, String> entityTableMap;
+
+    /**
+     * Key: 数据表名
+     * Value: 实体类类型
+     */
+    public final static Map<String, Class<?>> tableEntityMap;
+
     static {
         entityMap = new HashMap<>();
         tableMap = new HashMap<>();
+        entityTableMap = new HashMap<>();
+        tableEntityMap = new HashMap<>();
         for (Class<?> clazz : ClassHolder.getEntityClassSet()) {
             // 转换成下划线的表名
             String tableName = NamingStringUtils.camelToUnderline(clazz.getSimpleName());
@@ -42,7 +56,11 @@ public final class EntityHolder {
             }
             entityMap.put(clazz, fieldMap);
             tableMap.put(tableName, columnMap);
+            entityTableMap.put(clazz, tableName);
+            tableEntityMap.put(tableName, clazz);
         }
     }
+
+
 
 }

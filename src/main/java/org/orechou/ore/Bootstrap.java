@@ -2,7 +2,12 @@ package org.orechou.ore;
 
 import org.orechou.ore.bean.Route;
 import org.orechou.ore.holder.*;
+import org.orechou.ore.orm.OrmManager;
+import org.orechou.ore.orm.utils.JdbcUtils;
+import org.orechou.ore.test.entity.User;
 import org.orechou.ore.utils.ClassLoaderUtils;
+
+import java.util.Date;
 
 /**
  * 框架启动类
@@ -20,7 +25,8 @@ public final class Bootstrap {
                 BeanHolder.class,
                 IocHolder.class,
                 AopHolder.class,
-                ConnectionHolder.class
+                ConnectionHolder.class,
+                OrmManager.class
         };
         for (Class<?> clazz : loadClasses) {
             ClassLoaderUtils.loadClass(clazz.getName(), true);
@@ -29,6 +35,10 @@ public final class Bootstrap {
 
     public static void main(String[] args) {
         init();
+        User user = new User();
+        user.setId((long) 0);
+        user.setCreateTime(new Date());
+        JdbcUtils.update(user);
     }
 
 }

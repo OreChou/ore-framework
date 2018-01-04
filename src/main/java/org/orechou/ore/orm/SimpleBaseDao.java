@@ -1,5 +1,8 @@
 package org.orechou.ore.orm;
 
+import org.orechou.ore.orm.utils.JdbcUtils;
+
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,10 +12,12 @@ import java.util.List;
  * @author OreChou
  * @create 2017-12-22 10:55
  */
-public class SimpleBaseDao<M, ID> implements BaseDao<M, ID> {
+public class SimpleBaseDao<M, ID extends Serializable> implements BaseDao<M, ID> {
+
     @Override
     public M add(M entity) {
-        return null;
+        JdbcUtils.insert(entity);
+        return entity;
     }
 
     @Override
@@ -27,6 +32,16 @@ public class SimpleBaseDao<M, ID> implements BaseDao<M, ID> {
 
     @Override
     public void delete(Collection<M> entities) {
+
+    }
+
+    @Override
+    public void deleteById(ID id) {
+
+    }
+
+    @Override
+    public void deleteByIds(Collection<ID> ids) {
 
     }
 
@@ -46,7 +61,17 @@ public class SimpleBaseDao<M, ID> implements BaseDao<M, ID> {
     }
 
     @Override
-    public List<M> get(Collection<ID> ids) {
+    public List<M> list(Collection<ID> ids) {
+        return null;
+    }
+
+    @Override
+    public M getByProperty(M entity) {
+        return null;
+    }
+
+    @Override
+    public List<M> listByProperty(M entity) {
         return null;
     }
 }
