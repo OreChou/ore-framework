@@ -18,147 +18,6 @@ import java.util.List;
 public class JdbcUtils {
 
     /**
-     * 执行SQL，返回结果列表,
-     * @param sql sql语句
-     * @param params 参数
-     * @param clazz 返回结果的类类型
-     * @param <T>
-     * @return
-     */
-    public static <T>List<T> executeWithResults(String sql, List<Object> params, Class<?> clazz) {
-        List<T> results = new ArrayList<>();
-        Connection conn = ConnectionHolder.mysqlConnectionPool.getConnection();
-        try {
-            PreparedStatement statement = conn.prepareStatement(sql);
-            if (params != null) {
-                for (int i = 0; i < params.size(); i++) {
-                    statement.setObject(i + 1, params.get(i));
-                }
-            }
-            ResultSet resultSet = statement.executeQuery();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            while (resultSet.next()) {
-                T item = (T) clazz.newInstance();
-                for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    // 获取数据表字段的名称
-                    String columnName = metaData.getColumnName(i + 1);
-                    // 将下划线的表字段转换成驼峰的实体属性名称
-                    String fieldName = NamingStringUtils.underlineToCamel(columnName);
-                    Object fieldValue = resultSet.getObject(columnName);
-                    Field field = clazz.getDeclaredField(fieldName);
-                    // 通过反射设置Field的值
-                    ReflectionUtil.setField(item, field, fieldValue);
-                }
-                results.add(item);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } finally {
-            // 释放获取的这个连接
-            ConnectionHolder.mysqlConnectionPool.releaseConnection(conn);
-        }
-        return results;
-    }
-
-    /**
-     * 执行SQL，返回单个的结果
-     * @param sql
-     * @param params
-     * @param clazz
-     * @param <T>
-     * @return
-     */
-    public static <T>T executeWithSingleResult(String sql, List<Object> params, Class<?> clazz) {
-        T result = null;
-        // 获取一个数据库连接
-        Connection conn = ConnectionHolder.mysqlConnectionPool.getConnection();
-        try {
-            PreparedStatement statement = conn.prepareStatement(sql);
-            if (params != null) {
-                for (int i = 0; i < params.size(); i++) {
-                    statement.setObject(i + 1, params.get(i));
-                }
-            }
-            ResultSet resultSet = statement.executeQuery();
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            if (resultSet.next()) {
-                result = (T) clazz.newInstance();
-                for (int i = 0; i < metaData.getColumnCount(); i++) {
-                    // 获取数据表字段的名称
-                    String columnName = metaData.getColumnName(i + 1);
-                    // 将下划线的表字段转换成驼峰的实体属性名称
-                    String fieldName = NamingStringUtils.underlineToCamel(columnName);
-                    Object fieldValue = resultSet.getObject(columnName);
-                    Field field = clazz.getDeclaredField(fieldName);
-                    // 通过反射设置Field的值
-                    ReflectionUtil.setField(result, field, fieldValue);
-                }
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } finally {
-            // 释放获取的这个连接
-            ConnectionHolder.mysqlConnectionPool.releaseConnection(conn);
-        }
-        return result;
-    }
-
-    public static boolean executeWithNoResult(String sql, List<Object> params) {
-        boolean result = false;
-        // 获取一个数据库连接
-        Connection conn = ConnectionHolder.mysqlConnectionPool.getConnection();
-        try {
-            PreparedStatement statement = conn.prepareStatement(sql);
-            if (params != null) {
-                for (int i = 0; i < params.size(); i++) {
-                    statement.setObject(i + 1, params.get(i));
-                }
-            }
-            result = statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // 释放获取的这个连接
-            ConnectionHolder.mysqlConnectionPool.releaseConnection(conn);
-        }
-        return  result;
-    }
-
-    /**
-     * 数据库执行SQL语句
-     * @param sql 传入的SQL语句
-     * @return
-     */
-    public static boolean executeSqlStatement(String sql) {
-        boolean result = false;
-        // 获取一个数据库连接
-        Connection conn = ConnectionHolder.mysqlConnectionPool.getConnection();
-        try {
-            Statement statement = conn.createStatement();
-            result = statement.execute(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            // 释放获取的这个连接
-            ConnectionHolder.mysqlConnectionPool.releaseConnection(conn);
-        }
-        return result;
-    }
-
-    /**
      * 数据库执行SQL语句，数据库连接由外部传入
      * @param sql
      * @param conn
@@ -184,7 +43,7 @@ public class JdbcUtils {
         // 准备好执行的SQL和参数
         String sql = SqlUtils.insertRecordSQL(entity);
         List<Object> params = ParamUtils.generateInsertParams(entity);
-        return insertOrUpdate(sql, params);
+        return executeWithoutResult(sql, params);
     }
 
     /**
@@ -195,19 +54,23 @@ public class JdbcUtils {
     public static boolean update(Object entity) {
         String sql = SqlUtils.updateRecordSQL(entity);
         List<Object> params = ParamUtils.generateUpdateParams(entity);
-        return insertOrUpdate(sql, params);
+        return executeWithoutResult(sql, params);
     }
 
     public static <T> List<T> selectAll(Object entity) {
-        List<T> result = new ArrayList<>();
         String sql = SqlUtils.queryRecordSQL(entity);
-        List<Object> params = ParamUtils.generateUpdateParams(entity);
-
-        return result;
+        List<Object> params = ParamUtils.generateSelectParams(entity);
+        return query(sql, params, entity.getClass());
     }
 
+    public static boolean delete(Object entity) {
+        String sql = SqlUtils.deleteRecordSQL(entity);
+        List<Object> params = ParamUtils.generateDeleteParams(entity);
+        System.out.println(sql + " " + params.size());
+        return executeWithoutResult(sql, params);
+    }
 
-    private static boolean insertOrUpdate(String sql, List<Object> params) {
+    private static boolean executeWithoutResult(String sql, List<Object> params) {
         boolean result = false;
         // 1.获取数据库连接
         Connection conn = ConnectionHolder.mysqlConnectionPool.getConnection();
@@ -225,20 +88,41 @@ public class JdbcUtils {
         return result;
     }
 
-    private static <T> List<T> query(String sql, List<Object> params) {
+    private static <T> List<T> query(String sql, List<Object> params, Class<?> clazz) {
         List<T> result = new ArrayList<>();
-
         // 1.获取数据库连接
         Connection conn = ConnectionHolder.mysqlConnectionPool.getConnection();
         try {
+            // 2.执行SQL获取结果
             PreparedStatement statement = conn.prepareStatement(sql);
             setParams(statement, params);
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            // 3.处理返回的结果，通过反射生成类实例
+            if (resultSet.next()) {
+                try {
+                    T record = (T) clazz.newInstance();
+                    for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                        String fieldName = NamingStringUtils.underlineToCamel(metaData.getColumnName(i));
+                        Object fieldValue = resultSet.getObject(i);
+                        Field field = clazz.getDeclaredField(fieldName);
+                        ReflectionUtil.setField(record, field, fieldValue);
+                    }
+                    result.add(record);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            // 4.释放数据库连接
             ConnectionHolder.mysqlConnectionPool.releaseConnection(conn);
         }
-
         return result;
     }
 

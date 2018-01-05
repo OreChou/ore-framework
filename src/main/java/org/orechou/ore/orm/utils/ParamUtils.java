@@ -71,6 +71,14 @@ public final class ParamUtils {
      * @return
      */
     public static List<Object> generateSelectParams(Object entity) {
+        return generateSelectOrDeleteParams(entity);
+    }
+
+    public static List<Object> generateDeleteParams(Object entity) {
+        return generateSelectOrDeleteParams(entity);
+    }
+
+    private static List<Object> generateSelectOrDeleteParams(Object entity) {
         List<Object> params = new ArrayList<>();
         Class<?> clazz = entity.getClass();
         Field[] fields = clazz.getDeclaredFields();
@@ -80,12 +88,6 @@ public final class ParamUtils {
                 params.add(value);
             }
         }
-        return params;
-    }
-
-    public static List<Object> generateDeleteParams(Object entity) {
-        List<Object> params = new ArrayList<>();
-
         return params;
     }
 

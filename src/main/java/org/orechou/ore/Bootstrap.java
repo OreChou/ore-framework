@@ -8,6 +8,7 @@ import org.orechou.ore.test.entity.User;
 import org.orechou.ore.utils.ClassLoaderUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 框架启动类
@@ -37,8 +38,7 @@ public final class Bootstrap {
         init();
         User user = new User();
         user.setId((long) 0);
-        user.setCreateTime(new Date());
-        JdbcUtils.update(user);
+        JdbcUtils.delete(user);
     }
 
 }

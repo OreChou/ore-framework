@@ -8,8 +8,6 @@ import org.orechou.ore.test.entity.User;
 import org.orechou.ore.utils.NamingStringUtils;
 import org.orechou.ore.utils.ReflectionUtil;
 
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +23,10 @@ import java.util.List;
 public class SqlUtils {
 
     private static TypeConvertor typeConvertor;
+
+    private static String OPERATION_DELETE = "delete";
+
+    private static String OPERATION_SELECT = "select *";
 
     static {
         typeConvertor = new MysqlTypeConvertor();
@@ -108,6 +110,11 @@ public class SqlUtils {
         return sqlBuffer.toString();
     }
 
+    /**
+     * TODO: 当传入得实体只有id属性的时候会有错误
+     * @param object
+     * @return
+     */
     public static String updateRecordSQL(Object object) {
         StringBuffer sqlBuffer = new StringBuffer();
         String tableName = NamingStringUtils.camelToUnderline(object.getClass().getSimpleName());
@@ -131,18 +138,40 @@ public class SqlUtils {
     }
 
     public static String queryRecordSQL(Object object) {
+        return queryOrDeleteRecordSQL(object, OPERATION_SELECT);
+    }
+
+    public static String deleteRecordSQL(Object object) {
+        return queryOrDeleteRecordSQL(object, OPERATION_DELETE);
+    }
+
+    private static String queryOrDeleteRecordSQL(Object object, String operation) {
         StringBuffer sqlBuffer = new StringBuffer();
         String tableName = NamingStringUtils.camelToUnderline(object.getClass().getSimpleName());
-        sqlBuffer.append("select * from " + tableName + " where ");
+        sqlBuffer.append(operation + " from " + tableName + " where ");
         Class<?> clazz = object.getClass();
         Field[] fields = clazz.getDeclaredFields();
+        List<Field> valueFields = new ArrayList<>();
+        // 遍历所有得Field获取有值得Field
         for (Field field : fields) {
             Object value = ReflectionUtil.getField(object, field);
             if (value != null) {
-                sqlBuffer.append(NamingStringUtils.camelToUnderline(field.getName()) + " = ?, ");
+                valueFields.add(field);
             }
         }
-        sqlBuffer.delete(sqlBuffer.length() - 2, sqlBuffer.length());
+        // 遍历有值得Fields生成SQL
+        for (int i = 0; i < valueFields.size(); i++) {
+            Field field = valueFields.get(i);
+            if ((valueFields.size() > 1) && (i == valueFields.size() - 1)) {
+                sqlBuffer.delete(sqlBuffer.length() - 2, sqlBuffer.length());
+                sqlBuffer.append(NamingStringUtils.camelToUnderline(" and " + field.getName() + " = ?"));
+            } else {
+                sqlBuffer.append(NamingStringUtils.camelToUnderline(field.getName() + " = ?, "));
+            }
+        }
+        if (valueFields.size() <= 1) {
+            sqlBuffer.delete(sqlBuffer.length() - 2, sqlBuffer.length());
+        }
         return sqlBuffer.toString();
     }
 
@@ -154,6 +183,7 @@ public class SqlUtils {
         System.out.println(insertRecordSQL(user));
         System.out.println(updateRecordSQL(user));
         System.out.println(queryRecordSQL(user));
+        System.out.println(deleteRecordSQL(user));
     }
 
 }
