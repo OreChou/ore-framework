@@ -1,14 +1,10 @@
 package org.orechou.ore;
 
-import org.orechou.ore.bean.Route;
 import org.orechou.ore.holder.*;
 import org.orechou.ore.orm.OrmManager;
 import org.orechou.ore.orm.utils.JdbcUtils;
 import org.orechou.ore.test.entity.User;
 import org.orechou.ore.utils.ClassLoaderUtils;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * 框架启动类

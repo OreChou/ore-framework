@@ -27,7 +27,7 @@ public class SimpleBaseDao<M, ID extends Serializable> implements BaseDao<M, ID>
 
     @Override
     public void delete(M entity) {
-
+        JdbcUtils.delete(entity);
     }
 
     @Override
@@ -47,7 +47,8 @@ public class SimpleBaseDao<M, ID extends Serializable> implements BaseDao<M, ID>
 
     @Override
     public M update(M entity) {
-        return null;
+        JdbcUtils.update(entity);
+        return entity;
     }
 
     @Override
@@ -72,6 +73,6 @@ public class SimpleBaseDao<M, ID extends Serializable> implements BaseDao<M, ID>
 
     @Override
     public List<M> listByProperty(M entity) {
-        return null;
+        return JdbcUtils.selectAll(entity);
     }
 }

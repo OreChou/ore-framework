@@ -49,6 +49,8 @@ public class DispatcherServlet extends HttpServlet {
         String url = req.getPathInfo();
         // 获取HTTP
         String method = req.getMethod();
+        // 获取ContentType
+        String contentType = req.getContentType();
         // 生成对应的 Route
         Route route = new Route(url, HttpMethodConvertor.convert(method));
         // 请求的参数

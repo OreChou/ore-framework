@@ -21,7 +21,9 @@ public final class BeanHolder {
         BEAN_MAP = new HashMap<>();
         // 遍历所有的Bean类，生成该类类型的实例，加入到Map中
         for (Class<?> clazz : ClassHolder.getClassSet()) {
-            BEAN_MAP.put(clazz, ReflectionUtil.newInstance(clazz));
+            if (!clazz.isInterface()) {
+                BEAN_MAP.put(clazz, ReflectionUtil.newInstance(clazz));
+            }
         }
     }
 
