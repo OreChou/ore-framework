@@ -53,7 +53,7 @@ public class ReflectionUtil {
      * @param params 参数
      * @return
      */
-    private static Object invokeMethod(Object classObj, Method method, Object... params) {
+    private static Object executeMethod(Object classObj, Method method, Object... params) {
         Object result;
         try {
             method.setAccessible(true);
@@ -80,10 +80,19 @@ public class ReflectionUtil {
             System.out.println(name);
             parameterObjects.add(params.get(name));
         }
-
-//        String[] arr = list.toArray(new String[list.size()]);
-        result = invokeMethod(classObj, method, parameterObjects.toArray(new String[parameterObjects.size()]));
+        result = executeMethod(classObj, method, parameterObjects.toArray(new String[parameterObjects.size()]));
         return result;
+    }
+
+    /**
+     *
+     * @param classObj
+     * @param method
+     * @param param
+     * @return
+     */
+    public static Object invokeMethod(Object classObj, Method method, Object param) {
+        return executeMethod(classObj, method, param);
     }
 
     /**

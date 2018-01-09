@@ -9,7 +9,7 @@ package org.orechou.ore.bean;
 public class BaseProperties {
 
     /**
-     * base-url
+     * core-url
      */
     private String baseUrl;
 
