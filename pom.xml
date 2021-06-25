@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.19</version>
+            <version>1.26</version>
         </dependency>
         <!-- 用于动态生成代码的库 -->
         <dependency>
